@@ -12,16 +12,10 @@ const Signup = ({ str }: SignupProps) => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const signingUp = async (username: string, password: string) => {
         try {
-            // const saltRounds = 10;
-            // const hashedPassword = await bcrypt.hash(password, saltRounds);
-            const hashedPassword = await Crypto.digestStringAsync(
-                Crypto.CryptoDigestAlgorithm.SHA256,
-                password
-            );
             const response = await fetch('http://localhost:3000/signup', {
                 method: 'POST',
                 // body : JSON.stringify({username, password}),
-                body: JSON.stringify({ username, password: hashedPassword }),
+                body: JSON.stringify({ username, password}),
                 headers: { 'Content-Type': 'application/json' },
             });
             const result = await response.json();

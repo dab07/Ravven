@@ -13,14 +13,10 @@ const Login = ({ str }: LoginProps) => {
     const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         try {
-            const hashedPassword = await Crypto.digestStringAsync(
-                Crypto.CryptoDigestAlgorithm.SHA256,
-                password
-            );
 
             const response = await fetch('http://localhost:3000/login', {
                 method: 'POST',
-                body: JSON.stringify({ username, password: hashedPassword }),
+                body: JSON.stringify({ username, password }),
                 headers: { 'Content-Type': 'application/json' },
             });
             const data = await response.json();
