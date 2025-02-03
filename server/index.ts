@@ -6,7 +6,7 @@ const cors = require('cors')
 
 const PORT : number = 3000
 
-app.use(cors())
+app.use(cors({credentials : true, origin:'http://localhost:8081'}))
 app.use(express.json())
 app.use('/', router)
 

@@ -1,28 +1,40 @@
 import React, { useState } from 'react';
 import '../css/Login.css';
-import * as Crypto from 'expo-crypto';
+// import {useAuth} from "../Context/AuthContext";
+import { useNavigate } from 'react-router-dom';
 
 type LoginProps = {
     str: string;
 };
 
+
 const Login = ({ str }: LoginProps) => {
+    const navigate = useNavigate();
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    // const { login } = useAuth();
 
     const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         try {
-
             const response = await fetch('http://localhost:3000/login', {
                 method: 'POST',
                 body: JSON.stringify({ username, password }),
                 headers: { 'Content-Type': 'application/json' },
             });
+
             const data = await response.json();
-            console.log('Login response:', data);
+            console.log("Login data ", data)
+            if (response.ok) {
+                navigate('/');
+            } else {
+                setError(data.error || 'Login failed');
+            }
         } catch (error) {
             console.error('Login error:', error);
+            setError('An error occurred during login');
         }
     };
 
