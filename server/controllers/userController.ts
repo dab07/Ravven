@@ -17,20 +17,20 @@ const login = async (req : Request, res : Response) => {
             return res.status(401).json({ error: "User not found" });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, (user as any).password);
         if (!isPasswordValid) {
             console.log('Password mismatch');
             return res.status(401).json({ error: "Invalid password" });
         }
 
-        const token = jwt.sign({userId: user._id, username : user.username},
+        const token = jwt.sign({userId: (user as any)._id, username : (user as any).username},
             JWT_SECRET,
             {expiresIn: '1h'}
         )
         console.log("Login successful");
         res.status(200).cookie('token', token).json({
             message: "Login successful",
-            user: { username: user.username, _id: user._id },
+            user: { username: (user as any).username, _id: (user as any)._id },
             token
         });
     } catch (error) {

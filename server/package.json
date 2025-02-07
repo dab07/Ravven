@@ -6,6 +6,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.8",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "expo": "^52.0.27",
     "expo-crypto": "^14.0.2",

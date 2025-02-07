@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../css/Login.css';
-// import {useAuth} from "../Context/AuthContext";
+import {useAuth} from "../Context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 
 type LoginProps = {
@@ -14,7 +14,7 @@ const Login = ({ str }: LoginProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    // const { login } = useAuth();
+    const { login } = useAuth();
 
     const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -28,6 +28,7 @@ const Login = ({ str }: LoginProps) => {
             const data = await response.json();
             console.log("Login data ", data)
             if (response.ok) {
+                login(data.token, data.user);
                 navigate('/');
             } else {
                 setError(data.error || 'Login failed');

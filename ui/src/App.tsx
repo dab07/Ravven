@@ -5,20 +5,16 @@ import Login from './Components/Login';
 import IndexPage from './Pages/IndexPage';
 import Signup from './Components/Signup';
 import Layout from './Components/Layout';
-import {AuthProvider} from './Context/AuthContext'
-import ProtectedRoute from './components/ProtectedRoutes';
+import {AuthProvider} from './Context/AuthContext';
+import ProtectedRoute from './Components/ProtectedRoutes';
 const App = () => {
     return (
         <AuthProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={
-                        <ProtectedRoute>
-                            <Layout/>
-                        </ProtectedRoute>
-                    }>
+                    <Route path="/" element={<Layout />}>
                         <Route index element={<IndexPage />} />
-                        <Route index path="/login" element={<Login str="Login" />} />
+                        <Route path="/login" element={<Login str="Login" />} />
                         <Route path="/signup" element={<Signup str="Signup" />} />
                     </Route>
                 </Routes>
