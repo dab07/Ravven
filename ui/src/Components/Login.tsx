@@ -23,6 +23,7 @@ const Login = ({ str }: LoginProps) => {
                 method: 'POST',
                 body: JSON.stringify({ username, password }),
                 headers: { 'Content-Type': 'application/json' },
+                credentials : 'include'
             });
 
             const data = await response.json();

@@ -5,27 +5,29 @@ const controllers = require('../controllers/userController');
 
 const router = express.Router();
 
-router.post('/login', async (req: Request, res: Response) => {
-    await controllers.login(req, res);
-});
+router.post('/login', controllers.login);
+router.post('/signup', controllers.signup);
 
-router.post('/signup', async (req: Request, res: Response) => {
-    await controllers.signup(req, res);
-});
-router.get('/profile', async (req : Request, res : Response)=> {
-    res.json(req.cookies)
-})
-router.get('/protected-route',
-    controllers.authenticateToken,
-    (req: Request<ParamsDictionary, any, any, any>, res: Response) => {
-        res.json({ message: "Protected data", user: (req as any).user });
-    }
-);
+router.get('/profile', controllers.authenticateToken, controllers.profile);
 
-router.get('/verifyToken',
-    controllers.authenticateToken,
-    controllers.verifyToken
-);
+router.get('/verifyToken', controllers.authenticateToken, controllers.verifyToken);
+
+
+// router.post('/login', async (req: Request, res: Response) => {
+//     await controllers.login(req, res);
+// });
+//
+// router.post('/signup', async (req: Request, res: Response) => {
+//     await controllers.signup(req, res);
+// });
+// router.get('/profile', async (req : Request, res : Response)=> {
+//     await controllers.profile(req, res);
+// })
+//
+// router.get('/verifyToken',
+//     controllers.authenticateToken,
+//     controllers.verifyToken
+// );
 
 
 

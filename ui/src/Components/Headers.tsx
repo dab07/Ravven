@@ -7,7 +7,7 @@ const Headers = () => {
 
     useEffect(() => {
         fetch('http://localhost:3000/profile', {
-            method: 'GET',
+            method : 'GET',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
@@ -31,8 +31,21 @@ const Headers = () => {
         <div className="header">
             <Link to="/" className="logo">myBlog</Link>
             <div className="nav">
-                <Link to="/login" className="login">Login</Link>
-                <Link to="/signup" className="Signup">Signup</Link>
+                {profile ? (
+                    <>
+                        <p>Welcome, {profile.username}</p>
+                        <Link to ='/create'>Create Post</Link>
+                        {/*<button onClick={() => {*/}
+                        {/*    setProfile(null);*/}
+                        {/*}}>Logout</button>*/}
+                    </>
+                ) : (
+                    <>
+                        <Link to="/login" className="login">Login</Link>
+                        <Link to="/signup" className="Signup">Signup</Link>
+                    </>
+                )}
+
             </div>
         </div>
     );

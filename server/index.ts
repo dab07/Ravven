@@ -8,10 +8,10 @@ const cors = require('cors')
 
 const PORT : number = 3000
 
+app.use(cookieParser())
 app.use(cors({credentials : true, origin:'http://localhost:8081'}))
 app.use(express.json())
 app.use('/', router)
-app.use(cookieParser)
 
 const uri = "mongodb+srv://ravven:GfEgKsKRXRXDVHAy@blog.wqjah.mongodb.net/?retryWrites=true&w=majority&appName=Blog";
 

@@ -25,7 +25,7 @@ const login = async (req : Request, res : Response) => {
 
         const token = jwt.sign({userId: (user as any)._id, username : (user as any).username},
             JWT_SECRET,
-            {expiresIn: '1h'}
+            {expiresIn: '24h'}
         )
         console.log("Login successful");
         res.status(200).cookie('token', token).json({
@@ -60,31 +60,65 @@ const signup = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+const profile = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).userId;
+
+        const user = await User.findById(userId)
+            .select('-password');
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error("Error in profile controller:", error);
+        res.status(500).json({ error: 'Error fetching profile' });
+    }
+};
 const authenticateToken = (req: Request, res: Response, next: Function) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = req.cookies.token || (req.headers.authorization?.split(' ')[1]);
 
     if (!token) {
         return res.status(401).json({ error: "Access token required" });
     }
 
-    jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-        if (err) {
-            return res.status(403).json({ error: "Invalid or expired token" });
-        }
-
-        (req as any).user = user;
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, username: string };
+        (req as any).userId = decoded.userId; // Attach userId to request
+        (req as any).user = decoded;
         next();
-    });
+    } catch (err) {
+        return res.status(403).json({ error: "Invalid or expired token" });
+    }
 };
+// const authenticateToken = (req: Request, res: Response, next: Function) => {
+//     const authHeader = req.headers['authorization'];
+//     const token = authHeader && authHeader.split(' ')[1];
+//
+//     if (!token) {
+//         return res.status(401).json({ error: "Access token required" });
+//     }
+//
+//     jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
+//         if (err) {
+//             return res.status(403).json({ error: "Invalid or expired token" });
+//         }
+//         (req as any).user = user;
+//         next();
+//     });
+// };
+
 
 const verifyToken = async (req: Request, res: Response) => {
     try {
-        const user = (req as any).user; // Set by authenticateToken middleware
+        const user = (req as any).user;
         res.json({ user });
     } catch (error) {
         res.status(401).json({ error: "Invalid token" });
     }
 };
 
-module.exports = {login, signup, authenticateToken, verifyToken}
+module.exports = {login, signup, profile, authenticateToken, verifyToken}
