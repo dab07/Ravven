@@ -27,6 +27,19 @@ const Headers = () => {
             });
     }, []);
 
+    const logout = () => {
+        fetch('http://localhost:3000/logout', {
+            method: 'POST',
+            credentials: 'include',
+        })
+            .then(() => {
+                setProfile(null);
+            })
+            .catch(error => {
+                console.error('Error logging out:', error);
+            });
+    };
+
     return (
         <div className="header">
             <Link to="/" className="logo">myBlog</Link>
@@ -35,9 +48,7 @@ const Headers = () => {
                     <>
                         <p>Welcome, {profile.username}</p>
                         <Link to ='/create'>Create Post</Link>
-                        {/*<button onClick={() => {*/}
-                        {/*    setProfile(null);*/}
-                        {/*}}>Logout</button>*/}
+                        <button onClick={logout}>Logout</button>
                     </>
                 ) : (
                     <>

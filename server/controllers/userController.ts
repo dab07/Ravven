@@ -60,6 +60,16 @@ const signup = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+const logout = (req: Request, res: Response) => {
+    try {
+        res.clearCookie('token');
+        console.log('User logged out successfully');
+        res.json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error("Error in logout controller:", error);
+        res.status(500).json({ error: 'Error during logout' });
+    }
+};
 
 const profile = async (req: Request, res: Response) => {
     try {
@@ -94,23 +104,6 @@ const authenticateToken = (req: Request, res: Response, next: Function) => {
         return res.status(403).json({ error: "Invalid or expired token" });
     }
 };
-// const authenticateToken = (req: Request, res: Response, next: Function) => {
-//     const authHeader = req.headers['authorization'];
-//     const token = authHeader && authHeader.split(' ')[1];
-//
-//     if (!token) {
-//         return res.status(401).json({ error: "Access token required" });
-//     }
-//
-//     jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-//         if (err) {
-//             return res.status(403).json({ error: "Invalid or expired token" });
-//         }
-//         (req as any).user = user;
-//         next();
-//     });
-// };
-
 
 const verifyToken = async (req: Request, res: Response) => {
     try {
@@ -121,4 +114,4 @@ const verifyToken = async (req: Request, res: Response) => {
     }
 };
 
-module.exports = {login, signup, profile, authenticateToken, verifyToken}
+module.exports = {login, signup, logout, profile, authenticateToken, verifyToken}
