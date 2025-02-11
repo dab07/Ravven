@@ -47,7 +47,7 @@ const Headers = () => {
                 {profile ? (
                     <>
                         <p>Welcome, {profile.username}</p>
-                        <Link to ='/create'>Create Post</Link>
+                        <Link to ='/createpost'>Create Post</Link>
                         <button onClick={logout}>Logout</button>
                     </>
                 ) : (

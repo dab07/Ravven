@@ -1,35 +1,15 @@
-import { Request, Response } from 'express';
 import express = require('express');
-import { ParamsDictionary } from 'express-serve-static-core';
-const controllers = require('../controllers/userController');
+
+const usercontrollers = require('../controllers/userController');
+const postcontrollers = require('../controllers/postController');
 
 const router = express.Router();
 
-router.post('/login', controllers.login);
-router.post('/signup', controllers.signup);
-router.post('/logout', controllers.logout)
-
-router.get('/profile', controllers.authenticateToken, controllers.profile);
-
-router.get('/verifyToken', controllers.authenticateToken, controllers.verifyToken);
-
-
-// router.post('/login', async (req: Request, res: Response) => {
-//     await controllers.login(req, res);
-// });
-//
-// router.post('/signup', async (req: Request, res: Response) => {
-//     await controllers.signup(req, res);
-// });
-// router.get('/profile', async (req : Request, res : Response)=> {
-//     await controllers.profile(req, res);
-// })
-//
-// router.get('/verifyToken',
-//     controllers.authenticateToken,
-//     controllers.verifyToken
-// );
-
-
+router.post('/login', usercontrollers.login);
+router.post('/signup', usercontrollers.signup);
+router.post('/logout', usercontrollers.logout);
+router.post('/createpost', postcontrollers.createPost);
+router.get('/profile', usercontrollers.authenticateToken, usercontrollers.profile);
+router.get('/verifyToken', usercontrollers.authenticateToken, usercontrollers.verifyToken);
 
 export default router;
