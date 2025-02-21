@@ -1,22 +1,34 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
+import PostModel from '../models/Post';
 
-const createPost = async (req : Request, res : Response) => {
+export const createPost = async (req: Request, res: Response) => {
     try {
-        const {title, summary, content} = req.body;
-        const file = req.file
+        const { title, summary, content } = req.body;
+        const file = req.file;
 
-        const post = {
+        const newPost = await PostModel.create({
             title,
             summary,
             content,
-            file: file ? file.filename : null
-        };
+            image: file ? file.filename : ''
+        });
 
-        res.json({ post });
+        res.json(newPost);
     } catch (error) {
         console.error("Error in createPost controller:", error);
-        res.status(500).json({error : "Internal server error"})
+        res.status(500).json({ error: "Internal server error" });
     }
-}
+};
 
-module.exports = {createPost}
+export const getPosts = async (req: Request, res: Response) => {
+    try {
+        const posts = await PostModel.find()
+            .populate('author', ['username'])
+            .sort({ createdAt: -1 })
+            .limit(20);
+        res.json(posts);
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};

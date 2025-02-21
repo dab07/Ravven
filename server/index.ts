@@ -1,6 +1,7 @@
 import express, {Request, Response} from "express";
 import mongoose = require('mongoose');
 import router from './router/userRoutes'
+import path from "path";
 
 const cookieParser = require('cookie-parser')
 const app = express();
@@ -12,8 +13,10 @@ app.use(cookieParser())
 app.use(cors({credentials : true, origin:'http://localhost:8081'}))
 app.use(express.json())
 app.use('/', router)
+app.use(express.urlencoded({ extended: true }));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-const uri = "mongodb+srv://ravven:GfEgKsKRXRXDVHAy@blog.wqjah.mongodb.net/?retryWrites=true&w=majority&appName=Blog";
+const uri : string = "mongodb+srv://ravven:GfEgKsKRXRXDVHAy@blog.wqjah.mongodb.net/?retryWrites=true&w=majority&appName=Blog";
 
 const clientOptions = {
     serverApi: {
@@ -31,5 +34,3 @@ mongoose.connect(uri, clientOptions)
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
-// MondoDb CLuster Credentials - ravven, Cluster@123

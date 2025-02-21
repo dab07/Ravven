@@ -50,8 +50,6 @@ const signup = async (req: Request, res: Response) => {
             password: hashedPassword
         });
         const userDoc = await newUser.save();
-
-
         res.status(201).json({
             user: { username: userDoc.username, _id: userDoc._id }
         });

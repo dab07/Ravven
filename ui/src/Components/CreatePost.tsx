@@ -10,7 +10,7 @@ const CreatePost = () => {
     const [redirect, setRedirect] = useState(false)
     const navigate = useNavigate();
     const handleCreatePost = async (e : React.MouseEvent<HTMLButtonElement>) => {
-        const formData = new FormData();
+        const formData : FormData = new FormData();
         formData.append('title', title);
         formData.append('summary', summary);
         if (file) formData.append('file', file[0]);
@@ -20,7 +20,6 @@ const CreatePost = () => {
         try {
             const response = await fetch('http://localhost:3000/createpost', {
                 method : 'POST',
-                // body : JSON.stringify({title, summary, file, content}),
                 body : formData,
                 credentials : 'include'
             })
@@ -39,14 +38,19 @@ const CreatePost = () => {
         return navigate('/')
     }
     return (
-        <form >
+        <form>
             <input type="title" placeholder={'Title'} value={title} onChange={e => setTile(e.target.value)}/>
             <input type="summary" placeholder={'Summary'} value={summary} onChange={e => setSummary(e.target.value)}/>
-            <input type="file" onChange={e => {
-                if (e.target.files?.[0]) {
-                    setFile(e.target.files[0]);
-                }
-            }}/>
+            <input
+                type="file"
+                onChange={(e) => {
+                    const selectedFile = e.target.files?.[0];
+                    if (selectedFile) {
+                        setFile(selectedFile);
+                        console.log('Selected file:', selectedFile); // Debug log
+                    }
+                }}
+            />
             <ReactQuill value={content} onChange={e => setContent(e)}/>
             <button onClick={handleCreatePost}>Create Post</button>
         </form>

@@ -1,6 +1,14 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import '../css/App.css'
 const Blog = () => {
+
+    // const [posts, setPost] = useState([]);
+    //
+    // useEffect(() => {
+    //     fetch('http://localhost:3000/getpost')
+    //         .then(response => response.json())
+    //         .then(posts => {setPost(posts)})
+    // }, []);
     return (
         <div className="blogs">
             <div className="image">
