@@ -11,13 +11,14 @@ const CreatePost = () => {
     const navigate = useNavigate();
     const handleCreatePost = async (e : React.MouseEvent<HTMLButtonElement>) => {
         const formData : FormData = new FormData();
+        console.log("About to send file:", file);
         formData.append('title', title);
         formData.append('summary', summary);
-        if (file) formData.append('file', file[0]);
+        if (file) formData.append('file', file, file.name);
         formData.append('content', content);
         e.preventDefault();
-
         try {
+
             const response = await fetch('http://localhost:3000/createpost', {
                 method : 'POST',
                 body : formData,
@@ -27,7 +28,11 @@ const CreatePost = () => {
             if (response.ok) {
                 console.log("Post Created: \n", data);
                 setRedirect(true)
-            } else {}
+            } else {
+                const errorData = await response.json();
+                console.error('Server Error:', errorData);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             console.log("Failed to create post");
         } catch (e) {
             console.error("Unable to upload Post : ", e);
@@ -38,11 +43,12 @@ const CreatePost = () => {
         return navigate('/')
     }
     return (
-        <form>
+        <form onSubmit={handleCreatePost}>
             <input type="title" placeholder={'Title'} value={title} onChange={e => setTile(e.target.value)}/>
             <input type="summary" placeholder={'Summary'} value={summary} onChange={e => setSummary(e.target.value)}/>
             <input
                 type="file"
+                name="file"
                 onChange={(e) => {
                     const selectedFile = e.target.files?.[0];
                     if (selectedFile) {
@@ -52,7 +58,7 @@ const CreatePost = () => {
                 }}
             />
             <ReactQuill value={content} onChange={e => setContent(e)}/>
-            <button onClick={handleCreatePost}>Create Post</button>
+            <button type="submit">Create Post</button>
         </form>
     );
 }

@@ -6,6 +6,8 @@ export const createPost = async (req: Request, res: Response) => {
         const { title, summary, content } = req.body;
         const file = req.file;
 
+        console.log("Req Body ", req.body)
+        console.log("Req File ", req.file)
         const newPost = await PostModel.create({
             title,
             summary,
@@ -15,8 +17,12 @@ export const createPost = async (req: Request, res: Response) => {
 
         res.json(newPost);
     } catch (error) {
-        console.error("Error in createPost controller:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("Detailed error in createPost:", error);
+        res.status(500).json({
+            error: "Internal server error",
+            // message: error.message,
+            // stack: error.stack
+        });
     }
 };
 

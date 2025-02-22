@@ -14,7 +14,7 @@ app.use(cors({credentials : true, origin:'http://localhost:8081'}))
 app.use(express.json())
 app.use('/', router)
 app.use(express.urlencoded({ extended: true }));
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const uri : string = "mongodb+srv://ravven:GfEgKsKRXRXDVHAy@blog.wqjah.mongodb.net/?retryWrites=true&w=majority&appName=Blog";
 
