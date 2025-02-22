@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/login', usercontrollers.login);
 router.post('/signup', usercontrollers.signup);
 router.post('/logout', usercontrollers.logout);
-router.post('/createpost', logRequest, middleware.single('file'), postcontrollers.createPost);
+router.post('/createpost', usercontrollers.authenticateToken, logRequest, middleware.single('file'), postcontrollers.createPost);
 router.get('/getpost', postcontrollers.getPosts);
 
 router.get('/profile', usercontrollers.authenticateToken, usercontrollers.profile);

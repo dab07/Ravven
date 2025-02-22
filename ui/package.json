@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
+    "date-fns": "^4.1.0",
     "expo": "~52.0.23",
     "expo-crypto": "~14.0.2",
     "expo-router": "^4.0.16",
