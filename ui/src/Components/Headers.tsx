@@ -2,8 +2,12 @@ import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import '../css/App.css';
 
+interface Profile {
+    username: string;
+}
+
 const Headers = () => {
-    const [profile, setProfile] = useState(null);
+    const [profile, setProfile] = useState<Profile | null>(null);
 
     useEffect(() => {
         fetch('http://localhost:3000/profile', {
@@ -19,7 +23,7 @@ const Headers = () => {
                 }
                 return response.json();
             })
-            .then(data => {
+            .then((data: Profile) => {
                 setProfile(data);
             })
             .catch(error => {

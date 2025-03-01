@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Blog from '../Components/Blogs';
+import {Post} from "../type/Post";
+import {Loading} from "./Loading";
 
 const IndexPage = () => {
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         setLoading(true);
@@ -17,7 +19,7 @@ const IndexPage = () => {
                 }
                 return response.json();
             })
-            .then(data => {
+            .then((data: Post[]) => {
                 console.log("Received posts:", data); // Debug log
                 setPosts(data);
                 setLoading(false);
@@ -30,7 +32,7 @@ const IndexPage = () => {
     }, []);
 
     if (loading) {
-        return <div>Loading posts...</div>;
+        return <Loading/>;
     }
 
     if (error) {

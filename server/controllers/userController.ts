@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import User from '../models/User';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
 const SALT_ROUNDS : number = 10;
 const JWT_SECRET : string = 'かいずこ鬼俺わなる'

@@ -7,6 +7,7 @@ import Signup from './Components/Signup';
 import Layout from './Components/Layout';
 import {AuthProvider} from './Context/AuthContext';
 import CreatePost from "./Components/CreatePost";
+
 const App = () => {
     return (
         <AuthProvider>
