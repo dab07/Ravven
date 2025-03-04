@@ -11,11 +11,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({children} : {children : React.ReactNode}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-    const [user, setUser] = useState('null')
+    const [user, setUser] = useState(null)
 
     useEffect(() => {
         const checkAuthentication = async () => {
-            const token : string = localStorage.getItem('token');
+            const token : string | null= localStorage.getItem('token');
             if (token) {
                 try {
                     const response = await fetch('http://localhost:3000/verifyToken', {

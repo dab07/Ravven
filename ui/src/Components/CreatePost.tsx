@@ -2,7 +2,7 @@ import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css'
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import '../css/CreatePost.css'
+// import '../css/CreatePost.css'
 import React from 'react'; // Add this import
 
 const CreatePost: React.FC = () => {  // Add proper type annotation

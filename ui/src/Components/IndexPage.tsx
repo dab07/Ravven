@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Blog from '../Components/Blogs';
+import Blog from './Blogs';
 import {Post} from "../type/Post";
-import {Loading} from "./Loading";
+import {Loading} from "../Pages/Loading";
 
 const IndexPage = () => {
     const [posts, setPosts] = useState<Post[]>([]);

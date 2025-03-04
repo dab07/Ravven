@@ -56,11 +56,10 @@ const Headers = () => {
                     </>
                 ) : (
                     <>
-                        <Link to="/login" className="login">Login</Link>
-                        <Link to="/signup" className="Signup">Signup</Link>
+                        <Link to="/login" >Login</Link>
+                        <Link to="/signup" >Signup</Link>
                     </>
                 )}
-
             </div>
         </div>
     );

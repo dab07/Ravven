@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/App.css';
+// import '../css/App.css';
 import { formatISO9075 } from 'date-fns';
 import { Post } from '../type/Post';
 const Blogs = ({ post } : {post : Post | null} ) => {

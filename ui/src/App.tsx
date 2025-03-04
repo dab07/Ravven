@@ -1,9 +1,9 @@
 import './css/App.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import React from 'react';
-import Login from './Components/Login';
-import IndexPage from './Pages/IndexPage';
-import Signup from './Components/Signup';
+import Login from './Pages/Login';
+import IndexPage from './Components/IndexPage';
+import Signup from './Pages/Signup';
 import Layout from './Components/Layout';
 import {AuthProvider} from './Context/AuthContext';
 import CreatePost from "./Components/CreatePost";
