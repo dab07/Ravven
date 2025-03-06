@@ -1,63 +1,58 @@
-import React, {useEffect, useState} from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import '../css/App.css';
-
-interface Profile {
-    username: string;
-}
+import { useAuth } from "../Context/AuthContext";
 
 const Headers = () => {
-    const [profile, setProfile] = useState<Profile | null>(null);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { isAuthenticated, user, logout , refreshProfile} = useAuth();
 
-    useEffect(() => {
-        fetch('http://localhost:3000/profile', {
-            method : 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data: Profile) => {
-                setProfile(data);
-            })
-            .catch(error => {
-                console.error('Error fetching profile:', error);
-            });
-    }, []);
+    // const getProfile = async () => {
+    //     const token = localStorage.getItem('token');
+    //     try {
+    //         const response = await fetch("http://localhost:3000/profile", {
+    //             method: "GET",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": token ? `Bearer ${token}` : ''
+    //             },
+    //             credentials: "include",
+    //         });
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             return data;
+    //         } else {
+    //             console.error("Network response was not ok");
+    //         }
+    //     } catch(error) {
+    //         console.error('Error fetching profile:', error);
+    //     }
+    // };
 
-    const logout = () => {
-        fetch('http://localhost:3000/logout', {
-            method: 'POST',
-            credentials: 'include',
-        })
-            .then(() => {
-                setProfile(null);
-            })
-            .catch(error => {
-                console.error('Error logging out:', error);
-            });
+    // useEffect(() => {
+    //     refreshProfile();
+    // }, [location]);
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
     };
 
     return (
         <div className="header">
-            <Link to="/" className="logo">myBlog</Link>
+            <Link to="/" className="logo">Ravven レベン</Link>
             <div className="nav">
-                {profile ? (
+                {isAuthenticated && user ? (
                     <>
-                        <p>Welcome, {profile.username}</p>
-                        <Link to ='/createpost'>Create Post</Link>
-                        <button onClick={logout}>Logout</button>
+                        <p>Welcome, {user.username}</p>
+                        <Link to='/createpost'>Create Post</Link>
+                        <button onClick={handleLogout}>Logout</button>
                     </>
                 ) : (
                     <>
-                        <Link to="/login" >Login</Link>
-                        <Link to="/signup" >Signup</Link>
+                        <Link to="/login">Login</Link>
+                        <Link to="/signup">Signup</Link>
                     </>
                 )}
             </div>

@@ -23,15 +23,23 @@ const login = async (req : Request, res : Response) => {
             return res.status(401).json({ error: "Invalid password" });
         }
 
-        const token = jwt.sign({userId: (user as any)._id, username : (user as any).username},
+        const token = jwt.sign(
+            {userId: (user as any)._id, username : (user as any).username},
             JWT_SECRET,
             {expiresIn: '24h'}
         )
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 2 * 60 * 60 * 1000
+        });
+
         console.log("Login successful");
-        res.status(200).cookie('token', token).json({
+        res.status(200).json({
             message: "Login successful",
             user: { username: (user as any).username, _id: (user as any)._id },
-            token
+            token : token
         });
     } catch (error) {
         console.error("Error in login controller:", error);
@@ -111,5 +119,56 @@ const verifyToken = async (req: Request, res: Response) => {
         res.status(401).json({ error: "Invalid token" });
     }
 };
+/* *
+• authenticateToken vs. checkAuth
 
-module.exports = {login, signup, logout, profile, authenticateToken, verifyToken}
+authenticateToken: This is a middleware function designed to protect routes. It verifies a token exists and is valid,
+    then attaches user info to the request object before calling next() to proceed to the protected route handler.
+checkAuth: This is an endpoint handler specifically for checking authentication status and returning that information to the client.
+    It doesn't just verify the token - it returns a response about authentication status and user data.
+
+Why you need checkAuth
+    The key difference is in how they're used:
+        Different use cases:
+            authenticateToken is used to protect API routes (like /profile)
+            checkAuth is used as an API endpoint itself that the frontend can call to determine auth status
+
+        Different responses:
+            authenticateToken doesn't return a response by itself - it either lets the request continue or returns an error
+            checkAuth always returns a response with information about authentication status
+
+        Frontend initialization:
+            When your React app first loads, it needs to know if the user is already authenticated
+            The app can't just try to access a protected route - it needs a dedicated endpoint that specifically answers "is the user logged in?"
+/
+ */
+const checkAuth = async (req: Request, res: Response) => {
+    try {
+        const token = req.cookies.token || (req.headers.authorization?.split(' ')[1]);
+
+        if (!token) {
+            return res.status(401).json({ authenticated: false });
+        }
+
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, username: string };
+            const user = await User.findById(decoded.userId).select('-password');
+
+            if (!user) {
+                return res.status(404).json({ authenticated: false });
+            }
+
+            return res.status(200).json({
+                authenticated: true,
+                user: { username: user.username, _id: user._id }
+            });
+        } catch (err) {
+            return res.status(403).json({ authenticated: false });
+        }
+    } catch (error) {
+        console.error("Error in checkAuth controller:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+module.exports = {login, signup, logout, profile, authenticateToken, verifyToken, checkAuth}

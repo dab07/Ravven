@@ -7,7 +7,7 @@ const Blogs = ({ post } : {post : Post | null} ) => {
         return null;
     }
 
-    console.log("Post data:", post); // Debug log to see what we're receiving
+    console.log("Post data:", post);
 
     return (
         <div className="blogs">

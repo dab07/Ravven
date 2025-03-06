@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 import '../css/Login.css';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
-type SignupProps = {
-    str: string;
-};
-
-const Signup = ({ str }: SignupProps) => {
+const Signup = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [sliderValue, setSliderValue] = useState(100);
+    const [isSignup, setIsSignup] = useState(true);
     const navigate = useNavigate();
 
     const signingUp = async (username: string, password: string) => {
         try {
             const response = await fetch('http://localhost:3000/signup', {
                 method: 'POST',
-                body: JSON.stringify({ username, password}),
+                body: JSON.stringify({ username, password }),
                 headers: { 'Content-Type': 'application/json' },
             });
             const result = await response.json();
@@ -31,11 +28,12 @@ const Signup = ({ str }: SignupProps) => {
         const value = parseInt(e.target.value);
         setSliderValue(value);
 
-        // If value is less than 50%, navigate to Login, else navigate to Signup
         if (value <= 50) {
+            setIsSignup(false);
             navigate('/login');
         } else {
-            navigate("/signup");
+            setIsSignup(true);
+            navigate('/signup');
         }
     };
 
@@ -49,41 +47,69 @@ const Signup = ({ str }: SignupProps) => {
     };
 
     return (
-        <div className="container">
-            <div className="heading">{str}</div>
-            <form className="form">
-                <input
-                    placeholder="E-mail"
-                    id="email"
-                    type="email"
-                    className="input"
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
-                    required={true}
-                />
-                <input
-                    placeholder="Password"
-                    id="password"
-                    type="password"
-                    value={password}
-                    className="input"
-                    onChange={e => setPassword(e.target.value)}
-                    required={true}
-                />
-                <input
-                    placeholder="Password"
-                    id="password"
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    type="password"
-                    className="input"
-                    required={true}
-                />
-                <button className="login-button" onClick={handleSignUp}>
-                    Sign Up
-                </button>
+        <div className="main-container">
+            <div className="cylinder-container">
+                <div className={`cylinder-box ${isSignup ? 'flipped' : ''}`}>
+                    <div className="form-container login">
+                        <div className="heading">Login</div>
+                        <form className="form">
+                            <input
+                                placeholder="Username"
+                                type="text"
+                                className="input"
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
+                                required
+                            />
+                            <input
+                                placeholder="Password"
+                                type="password"
+                                className="input"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                required
+                            />
+                            <button className="login-button">
+                                Login
+                            </button>
+                        </form>
+                    </div>
 
-            </form>
+                    <div className="form-container signup">
+                        <div className="heading">Signup</div>
+                        <form className="form">
+                            <input
+                                placeholder="Username"
+                                type="text"
+                                className="input"
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
+                                required
+                            />
+                            <input
+                                placeholder="Password"
+                                type="password"
+                                className="input"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                required
+                            />
+                            <input
+                                placeholder="Confirm Password"
+                                type="password"
+                                className="input"
+                                value={confirmPassword}
+                                onChange={e => setConfirmPassword(e.target.value)}
+                                required
+                            />
+                            <button className="login-button" onClick={handleSignUp}>
+                                Sign Up
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <div className="slider-container">
                 <input
                     type="range"
@@ -93,6 +119,10 @@ const Signup = ({ str }: SignupProps) => {
                     className="slider"
                     onChange={handleSliderChange}
                 />
+            </div>
+            <div className="slider-labels">
+                <span>« Slide here to Login</span>
+                <span>Slide here to Signup »</span>
             </div>
         </div>
     );

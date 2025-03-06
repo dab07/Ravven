@@ -1,87 +1,111 @@
 import React, { useState } from 'react';
 import '../css/Login.css';
-import {useAuth} from "../Context/AuthContext";
 import { useNavigate } from 'react-router-dom';
+import {useAuth} from "../Context/AuthContext";
 
-type LoginProps = {
-    str: string;
-};
-
-const Login = ({str}: LoginProps) =>  {
-    const navigate = useNavigate();
-
+const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [sliderValue, setSliderValue] = useState(0);
+    const [isSignup, setIsSignup] = useState(false);
+    const navigate = useNavigate();
     const {login} = useAuth();
 
-    const [sliderValue, setSliderValue] = useState(0);
+    const loggingIn = async (username: string, password: string) => {
+        try {
+            const response = await fetch('http://localhost:3000/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password }),
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const result = await response.json();
+            if (response.ok) {
+                login(result.user)
+                navigate('/');
+            }
+            console.log('Login response:', result);
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
+    };
 
     const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
         setSliderValue(value);
 
-        // If value is less than 50%, navigate to Login, else navigate to Signup
-        if (value <= 50) {
-            navigate('/login');
+        if (value > 50) {
+            setIsSignup(true);
+            navigate('/signup');
         } else {
-            navigate("/signup");
+            setIsSignup(false);
+            navigate('/login');
         }
     };
 
-
-    const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        try {
-            const response = await fetch('http://localhost:3000/login', {
-                method: 'POST',
-                body: JSON.stringify({username, password}),
-                headers: {'Content-Type': 'application/json'},
-                credentials: 'include'
-            });
-
-            const data = await response.json();
-            console.log("Login data ", data)
-            if (response.ok) {
-                login(data.token, data.user);
-                navigate('/');
-            } else {
-                setError(data.error || 'Login failed');
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            setError('An error occurred during login');
-        }
+    const handleLogin = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        loggingIn(username, password);
     };
 
     return (
-        <div className="container">
-            <div className="heading">{str}</div>
-            <form className="form">
-                <input
-                    placeholder="Username"
-                    id="username"
-                    type="text"
-                    className="input"
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
-                    required={true}
-                />
-                <input
-                    placeholder="Password"
-                    id="password"
-                    type="password"
-                    className="input"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    required={true}
-                />
-                <button className="login-button" onClick={handleLogin}>
-                    Login
-                </button>
-            </form>
-            <div className="slider-container">
+        <div className="main-container">
+            <div className="cylinder-container">
+                <div className={`cylinder-box ${isSignup ? 'flipped' : ''}`}>
+                    <div className="form-container login">
+                        <div className="heading">Login</div>
+                        <form className="form">
+                            <input
+                                placeholder="Username"
+                                type="text"
+                                className="input"
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
+                                required
+                            />
+                            <input
+                                placeholder="Password"
+                                type="password"
+                                className="input"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                required
+                            />
+                            <button className="login-button" onClick={handleLogin}>
+                                Login
+                            </button>
+                        </form>
+                    </div>
 
+                    <div className="form-container signup">
+                        <div className="heading">Signup</div>
+                        <form className="form">
+                            <input
+                                placeholder="Username"
+                                type="text"
+                                className="input"
+                                required
+                            />
+                            <input
+                                placeholder="Password"
+                                type="password"
+                                className="input"
+                                required
+                            />
+                            <input
+                                placeholder="Confirm Password"
+                                type="password"
+                                className="input"
+                                required
+                            />
+                            <button className="login-button">
+                                Sign Up
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div className="slider-container">
                 <input
                     type="range"
                     min="0"
@@ -91,8 +115,12 @@ const Login = ({str}: LoginProps) =>  {
                     onChange={handleSliderChange}
                 />
             </div>
+            <div className="slider-labels">
+                <span>« Slide here to Login</span>
+                <span>Slide here to Signup »</span>
+            </div>
         </div>
     );
-}
+};
 
 export default Login;
