@@ -1,0 +1,100 @@
+.posts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3 cards in a row */
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+    overflow-y: auto; /* Enables scrolling */
+    height: 90vh; /* Fixes scrolling issue */
+}
+
+/* Blog Card */
+.blog-card {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    color: white;
+}
+
+.blog-card:hover {
+    transform: scale(1.05);
+}
+
+/* Image */
+.blog-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Blog Info */
+.blog-info {
+    padding: 15px;
+}
+
+.blog-info h2 {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+.blog-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #bbb;
+}
+
+.blog-summary {
+    font-size: 0.95rem;
+    color: #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+/* Expand Summary on Hover */
+.blog-card:hover .blog-summary {
+    white-space: normal;
+}
+
+/* Modal */
+.blog-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-image {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.close-btn {
+    background: #ff5a5f;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
