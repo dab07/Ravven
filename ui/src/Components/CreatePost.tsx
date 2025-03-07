@@ -2,7 +2,7 @@ import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css'
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-// import '../css/CreatePost.css'
+import '../css/CreatePost.css'
 import React from 'react'; // Add this import
 
 const CreatePost: React.FC = () => {  // Add proper type annotation
@@ -50,22 +50,27 @@ const CreatePost: React.FC = () => {  // Add proper type annotation
     }
 
     return (
-        <div className="create-post">
-            <h2>Create a New Post</h2>
-            <form>
+        <div className="create-post-container">
+            <div className="create-post">
+                <h2>Create a New Post</h2>
+                <form className="form">
                     <input
+                        className="input"
                         type="text"
                         placeholder="Title"
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                     />
                     <input
+                        className="input"
+
                         type="text"
                         placeholder="Summary"
                         value={summary}
                         onChange={e => setSummary(e.target.value)}
                     />
                     <input
+                        className="input"
                         type="file"
                         onChange={(e) => {
                             const selectedFile = e.target.files?.[0];
@@ -74,15 +79,16 @@ const CreatePost: React.FC = () => {  // Add proper type annotation
                             }
                         }}
                     />
-                    <textarea>
+                    <div>
                         <ReactQuill
                             value={content}
                             onChange={setContent}
                             theme="snow"
                         />
-                    </textarea>
-                <button className="createPost-button" onClick={handleCreatePost}>Create Post</button>
-            </form>
+                    </div>
+                    <button className="createPost-button" onClick={handleCreatePost}>Create Post</button>
+                </form>
+            </div>
         </div>
     );
 }

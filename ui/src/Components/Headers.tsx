@@ -1,44 +1,18 @@
-import React, {useEffect, useState} from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import '../css/App.css';
 import { useAuth } from "../Context/AuthContext";
 
-interface Profile {
-    username: string;
-}
-
 const Headers = () => {
-    const [profile, setProfile] = useState<Profile | null>(null);
+    const { isAuthenticated, user, logout } = useAuth();
 
-    useEffect(() => {
-        fetch('http://localhost:3000/profile', {
-            method : 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                setProfile(data);
-            })
-            .catch(error => {
-                console.error('Error fetching profile:', error);
-            });
-    }, []);
-
-    const logout = () => {
+    const handleLogout = () => {
         fetch('http://localhost:3000/logout', {
             method: 'POST',
             credentials: 'include',
         })
             .then(() => {
-                setProfile(null);
+                logout();
             })
             .catch(error => {
                 console.error('Error logging out:', error);
@@ -49,11 +23,11 @@ const Headers = () => {
         <div className="header">
             <Link to="/" className="logo">Ravven レベン</Link>
             <div className="nav">
-                {profile ? (
+                {isAuthenticated && user ? (
                     <>
-                        <p>{profile.username}</p>
+                        <p>{user.username}</p>
                         <Link to='/createpost'>Create Post</Link>
-                        <button onClick={logout}>Logout</button>
+                        <button onClick={handleLogout}>Logout</button>
                     </>
                 ) : (
                     <>
