@@ -10,22 +10,24 @@ const Blogs = ({ post }: { post: Post | null }) => {
 
     return (
         <>
-            {/* Blog Card */}
             <div className="blog-card" onClick={() => setShowModal(true)}>
                 <div className="blog-image">
                     {post.image && (
                         <img src={`http://localhost:3000/uploads/${post.image}`} alt={post.title} />
                     )}
                 </div>
+
+                <div className="blog-meta">
+                    <span className="author">{post.author?.username || 'Anonymous'}</span>
+                    <time className="date">{post.createdAt ? formatISO9075(new Date(post.createdAt)) : 'No date'}</time>
+                </div>
+
                 <div className="blog-info">
-                    <h2>{post.title || 'Untitled'}</h2>
-                    <p className="blog-meta">
-                        <span className="author">{post.author?.username || 'Anonymous'}</span>
-                        <time>{post.createdAt ? formatISO9075(new Date(post.createdAt)) : 'No date'}</time>
-                    </p>
+                    <h2 className="title">{post.title || 'Untitled'}</h2>
                     <p className="blog-summary">{post.summary || post.content || 'No content'}</p>
                 </div>
             </div>
+
 
             {/* Modal for Full Post */}
             {showModal && (
