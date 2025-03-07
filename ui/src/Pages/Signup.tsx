@@ -17,8 +17,8 @@ const Signup = () => {
                 body: JSON.stringify({ username, password }),
                 headers: { 'Content-Type': 'application/json' },
             });
-            const result = await response.json();
-            console.log('Sign-up response:', result);
+            const data = await response.json();
+            console.log('Sign-up response:', data);
         } catch (error) {
             console.error('Error during sign-up:', error);
         }

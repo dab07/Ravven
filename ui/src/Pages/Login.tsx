@@ -17,13 +17,14 @@ const Login = () => {
                 method: 'POST',
                 body: JSON.stringify({ username, password }),
                 headers: { 'Content-Type': 'application/json' },
+                credentials : 'include'
             });
-            const result = await response.json();
+            const data = await response.json();
             if (response.ok) {
-                login(result.user)
+                login(data.user, data.token);
                 navigate('/');
             }
-            console.log('Login response:', result);
+            console.log('Login response:', data);
         } catch (error) {
             console.error('Error during login:', error);
         }

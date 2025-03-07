@@ -13,7 +13,7 @@ const CreatePost: React.FC = () => {  // Add proper type annotation
     const [redirect, setRedirect] = useState(false);
     const navigate = useNavigate();
 
-    const handleCreatePost = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleCreatePost= async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const formData = new FormData();
 
@@ -46,30 +46,25 @@ const CreatePost: React.FC = () => {  // Add proper type annotation
 
     if (redirect) {
         navigate('/');
-        return null; // Return null instead of navigate() directly
+        return null;
     }
 
     return (
         <div className="create-post">
             <h2>Create a New Post</h2>
-            <form onSubmit={handleCreatePost}>
-                <div className="form-group">
+            <form>
                     <input
                         type="text"
                         placeholder="Title"
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                     />
-                </div>
-                <div className="form-group">
                     <input
                         type="text"
                         placeholder="Summary"
                         value={summary}
                         onChange={e => setSummary(e.target.value)}
                     />
-                </div>
-                <div className="form-group">
                     <input
                         type="file"
                         onChange={(e) => {
@@ -79,15 +74,14 @@ const CreatePost: React.FC = () => {  // Add proper type annotation
                             }
                         }}
                     />
-                </div>
-                <div className="form-group">
-                    <ReactQuill
-                        value={content}
-                        onChange={setContent}
-                        theme="snow"
-                    />
-                </div>
-                <button type="submit">Create Post</button>
+                    <textarea>
+                        <ReactQuill
+                            value={content}
+                            onChange={setContent}
+                            theme="snow"
+                        />
+                    </textarea>
+                <button className="createPost-button" onClick={handleCreatePost}>Create Post</button>
             </form>
         </div>
     );
