@@ -11,7 +11,7 @@ const IndexPage = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch('http://localhost:3000/getpost', {
+        fetch(`${process.env.REACT_APP_API_URL}/getpost`, {
             credentials: 'include',
         })
             .then(response => {

@@ -1,5 +1,16 @@
 {
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "https://your-backend-url.vercel.app/:path*" }
-  ]
+  "version": 2,
+  "builds": [
+    { "src": "./index.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/" }
+  ],
+  "env": {
+    "PORT": "3000",
+    "NODE_ENV": "production",
+    "MONGODB_URI": "mongodb+srv://ravven:GfEgKsKRXRXDVHAy@blog.wqjah.mongodb.net/?retryWrites=true&w=majority&appName=Blog",
+    "JWT_SECRET": "かいずこ鬼俺わなる",
+    "CORS_ORIGIN": ""
+  }
 }

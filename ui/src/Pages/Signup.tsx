@@ -12,7 +12,7 @@ const Signup = () => {
 
     const signingUp = async (username: string, password: string) => {
         try {
-            const response = await fetch('http://localhost:3000/signup', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/signup`, {
                 method: 'POST',
                 body: JSON.stringify({ username, password }),
                 headers: { 'Content-Type': 'application/json' },

@@ -1,9 +1,13 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "dist/index.js", "use": "@vercel/node" }
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://ravven-api.vercel.app/:path*" }
   ],
-  "routes": [
-    { "src": "/(.*)", "dest": "dist/index.js" }
-  ]
+  "env": {
+    "REACT_APP_API_URL": "https://ravven-api.vercel.app"
+  },
+  "build": {
+    "env": {
+      "REACT_APP_API_URL": "https://ravven-api.vercel.app"
+    }
+  }
 }

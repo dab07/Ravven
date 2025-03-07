@@ -26,7 +26,7 @@ export const AuthProvider = ({children} : {children : React.ReactNode}) => {
             const token = localStorage.getItem('token');
             if (!token) return;
 
-            const response = await fetch('http://localhost:3000/profile', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/profile`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -51,7 +51,7 @@ export const AuthProvider = ({children} : {children : React.ReactNode}) => {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    const response = await fetch('http://localhost:3000/verifyToken', {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/verifyToken`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         },

@@ -13,7 +13,7 @@ const Blogs = ({ post }: { post: Post | null }) => {
             <div className="blog-card" onClick={() => setShowModal(true)}>
                 <div className="blog-image">
                     {post.image && (
-                        <img src={`http://localhost:3000/uploads/${post.image}`} alt={post.title} />
+                        <img src={`${process.env.REACT_APP_API_URL}/uploads/${post.image}`} alt={post.title} />
                     )}
                 </div>
 
