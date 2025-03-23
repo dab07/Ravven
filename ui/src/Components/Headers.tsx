@@ -7,7 +7,7 @@ const Headers = () => {
     const { isAuthenticated, user, logout } = useAuth();
 
     const handleLogout = () => {
-        fetch(`${process.env.REACT_APP_API_URL}/logout`, {
+        fetch(`http://localhost:3000/logout`, {
             method: 'POST',
             credentials: 'include',
         })
