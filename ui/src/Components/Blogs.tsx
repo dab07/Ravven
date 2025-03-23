@@ -3,7 +3,11 @@ import { formatISO9075 } from 'date-fns';
 import { Post } from '../type/Post';
 import '../css/Blogs.css';
 
-const Blogs = ({ post }: { post: Post | null }) => {
+type BlogProps = {
+    post: Post | null;
+}
+
+const Blogs = ({ post } : BlogProps) => {
     const [showModal, setShowModal] = useState(false);
 
     if (!post) return null;

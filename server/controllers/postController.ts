@@ -18,7 +18,7 @@ export const createPost = async (req: Request, res: Response) => {
             summary,
             content,
             image: file ? file.filename : '',
-            author: userId  // Now this should be properly set
+            author: userId
         });
 
         res.json(newPost);

@@ -25,7 +25,7 @@ const Headers = () => {
             <div className="nav">
                 {isAuthenticated && user ? (
                     <>
-                        <p>{user.username}</p>
+                        <Link to='/myprofile'>{user.username}</Link>
                         <Link to='/createpost'>Create Post</Link>
                         <button onClick={handleLogout}>Logout</button>
                     </>
