@@ -7,6 +7,7 @@ import Signup from './Pages/Signup';
 import Layout from './Components/Layout';
 import {AuthProvider} from './Context/AuthContext';
 import CreatePost from "./Components/CreatePost";
+import {myProfile} from "./Components/myProfile";
 
 const App = () => {
     return (
@@ -18,6 +19,7 @@ const App = () => {
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/createpost" element={<CreatePost/>}/>
+                        <Route path="/myprofile" element={<myProfile />} />
                     </Route>
                 </Routes>
             </Router>
