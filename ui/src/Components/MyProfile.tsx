@@ -1,199 +1,236 @@
-import React, { useEffect, useState } from 'react';
-import Blog from './Blogs';
-import { Post } from "../type/Post";
+import React, { useState, useEffect } from 'react';
 import { useAuth } from "../Context/AuthContext";
-import '../css/Blogs.css';
+import { Post } from "../type/Post";
+import Blog from './Blogs';
+import '../css/Myprofile.css';
 
 const MyProfile = () => {
+    const [isEditing, setIsEditing] = useState(false);
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
 
-    // State for profile editing
-    const [isEditingProfile, setIsEditingProfile] = useState(false);
+    // Profile Edit State
     const [username, setUsername] = useState(user?.username || '');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // State for post editing
-    const [editingPostId, setEditingPostId] = useState<string | null>(null);
-
-    // Access user ID safely with type assertion
-    const userId = user ? (user as any)._id : null;
+    // Blog Edit States
+    const [editingBlogs, setEditingBlogs] = useState<{[key: string]: boolean}>({});
+    const [editedPost, setEditedPost] = useState<{[key: string]: Partial<Post>}>({});
 
     useEffect(() => {
-        if (!userId) {
-            setLoading(false);
-            return;
-        }
-
-        setLoading(true);
-
-        fetch(`http://localhost:3000/getpost`, {
-            credentials: 'include',
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data: Post[]) => {
-                console.log("All posts:", data);
-
-                const filteredPosts = data.filter(post => {
-                    const postAuthor = (post as any).author;
-                    if (!postAuthor) return false;
-
-                    if (typeof postAuthor === 'string') {
-                        return postAuthor === userId;
-                    } else if (typeof postAuthor === 'object') {
-                        return postAuthor._id === userId;
-                    }
-                    return false;
+        const fetchUserPosts = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/getpost', {
+                    credentials: 'include'
                 });
-
+                const data: Post[] = await response.json();
+                const filteredPosts = data.filter(post =>
+                    (post.author as any)?._id === user?._id
+                );
                 setUserPosts(filteredPosts);
                 setLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching posts:', error);
-                setError(error.message);
+            } catch (error) {
+                console.error('Error fetching posts', error);
                 setLoading(false);
-            });
-    }, [userId]);
+            }
+        };
 
-    // Profile update handler
-    const handleProfileUpdate = (e: React.FormEvent) => {
+        fetchUserPosts();
+    }, [user]);
+
+    const handleProfileUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
-
         if (password && password !== confirmPassword) {
-            alert("Passwords don't match");
+            alert("Passwords do not match");
             return;
         }
 
-        fetch('http://localhost:3000/updateProfile', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                username,
-                // Only include password if it's being changed
-                ...(password && { password })
-            })
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to update profile');
-                return response.json();
-            })
-            .then(updatedUser => {
-                // Update user in auth context
-                if (updatedUser) updatedUser(updatedUser);
-                setIsEditingProfile(false);
-                setPassword('');
-                setConfirmPassword('');
-                alert('Profile updated successfully');
-            })
-            .catch(err => {
-                console.error('Error updating profile:', err);
-                alert('Failed to update profile');
+        try {
+            const response = await fetch('http://localhost:3000/updateProfile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ username, password })
             });
-    };
 
-    // Function to handle post deletion
-    const handleDeletePost = (postId: string) => {
-        if (window.confirm('Are you sure you want to delete this post?')) {
-            fetch(`http://localhost:3000/myprofile/${postId}`, {
-                method: 'DELETE',
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to delete post');
-                    // Remove the deleted post from state
-                    setUserPosts(userPosts.filter(post => post._id !== postId));
-                    alert('Post deleted successfully');
-                })
-                .catch(err => {
-                    console.error('Error deleting post:', err);
-                    alert('Failed to delete post');
-                });
+            if (response.ok) {
+                alert('Profile updated successfully');
+                setIsEditing(false);
+            }
+        } catch (error) {
+            console.error('Update error', error);
         }
     };
 
-    // Function to handle editing a post
-    const handleEditPost = (postId: string) => {
-        // Set the ID of the post being edited
-        setEditingPostId(postId);
-        // You would typically redirect to an edit page or open a modal
-        // For simplicity, let's assume you redirect
-        window.location.href = `/editpost/${postId}`;
+    const handleBlogUpdate = async (postId: string) => {
+        try {
+            const post = editedPost[postId];
+            const response = await fetch(`http://localhost:3000/updatePost/${postId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(post)
+            });
+
+            if (response.ok) {
+                // Update local state
+                const updatedPost = await response.json();
+                setUserPosts(userPosts.map(p =>
+                    p._id === postId ? updatedPost : p
+                ));
+
+                // Exit edit mode for this post
+                setEditingBlogs({
+                    ...editingBlogs,
+                    [postId]: false
+                });
+            }
+        } catch (error) {
+            console.error('Blog update error', error);
+        }
     };
 
+    const handleDeleteBlog = async (postId: string) => {
+        try {
+            const response = await fetch(`http://localhost:3000/deletePost/${postId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                // Remove post from local state
+                setUserPosts(userPosts.filter(p => p._id !== postId));
+            }
+        } catch (error) {
+            console.error('Blog delete error', error);
+        }
+    };
+
+    const handleEditPostChange = (postId: string, field: keyof Post, value: string) => {
+        setEditedPost({
+            ...editedPost,
+            [postId]: {
+                ...editedPost[postId],
+                [field]: value
+            }
+        });
+    };
+
+    if (loading) return <div>Loading...</div>;
+
     return (
-        <div className="profile-container">
-            <h1>My Profile</h1>
+        <div className="profile">
+            <div className="main-profile">
+                <h1>Your Profile</h1>
+            </div>
 
-            {isEditingProfile ? (
-                <div className="edit-profile-form">
-                    <h2>Edit Profile</h2>
+            <div className={`profile-edit ${isEditing ? 'editing' : ''}`}>
+                {!isEditing ? (
+                    <div>
+                        <h2>{username}</h2>
+                    </div>
+                ) : (
                     <form onSubmit={handleProfileUpdate}>
-                        <div className="form-group">
-                            <label>Username</label>
-                            <input
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>New Password (leave blank to keep current)</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Confirm New Password</label>
-                            <input
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </div>
-                        <div className="form-actions">
-                            <button type="submit">Save Changes</button>
-                            <button type="button" onClick={() => setIsEditingProfile(false)}>Cancel</button>
-                        </div>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Username"
+                        />
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="New Password"
+                        />
+                        <input
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="Confirm Password"
+                        />
                     </form>
-                </div>
-            ) : (
-                <div className="user-info">
-                    <h2>{user?.username || 'User'}</h2>
-                    <button onClick={() => setIsEditingProfile(true)}>Edit Profile</button>
-                </div>
-            )}
+                )}
+            </div>
 
-            <h2>My Posts</h2>
-            {(!userPosts || userPosts.length === 0) ? (
-                <div>You haven't created any posts yet</div>
-            ) : (
-                <div className="posts-container">
-                    {userPosts.map(post => (
-                        <div key={post._id} className="post-with-actions">
-                            <Blog key= {post._id} post={post} />
-                            <div className="post-actions">
-                                <button onClick={() => handleEditPost(post._id)}>Edit</button>
-                                <button onClick={() => handleDeletePost(post._id)}>Delete</button>
+            <div className="user-post-counts">
+                <span>Posts: {userPosts.length}</span>
+            </div>
+
+            <div className="profile-edit">
+                <button onClick={() => setIsEditing(!isEditing)}>
+                    {isEditing ? 'Cancel' : 'Edit'}
+                </button>
+            </div>
+
+            <div className="main-post">
+                <h2>Your Posts</h2>
+            </div>
+
+            <div className="user-posts">
+                {userPosts.map(post => (
+                    <div key={post._id} className="blog-wrapper">
+                        {editingBlogs[post._id] ? (
+                            <div className="blog-edit-form">
+                                <input
+                                    value={editedPost[post._id]?.title || post.title}
+                                    onChange={(e) => handleEditPostChange(post._id, 'title', e.target.value)}
+                                    placeholder="Title"
+                                />
+                                <textarea
+                                    value={editedPost[post._id]?.summary || post.summary}
+                                    onChange={(e) => handleEditPostChange(post._id, 'summary', e.target.value)}
+                                    placeholder="Summary"
+                                />
+                                <textarea
+                                    value={editedPost[post._id]?.content || post.content}
+                                    onChange={(e) => handleEditPostChange(post._id, 'content', e.target.value)}
+                                    placeholder="Content"
+                                />
+                                <div className="blog-edit-actions">
+                                    <button onClick={() => handleBlogUpdate(post._id)}>Save</button>
+                                    <button onClick={() => setEditingBlogs({
+                                        ...editingBlogs,
+                                        [post._id]: false
+                                    })}>Cancel</button>
+                                    <button onClick={() => handleDeleteBlog(post._id)}>Delete</button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ) : (
+                            <div className="blog-display">
+                                <Blog post={post} />
+                                <div className="blog-actions">
+                                    <button
+                                        className="edit-blog-btn"
+                                        onClick={() => {
+                                            // Reset edited post state
+                                            setEditedPost({
+                                                ...editedPost,
+                                                [post._id]: {
+                                                    title: post.title,
+                                                    summary: post.summary,
+                                                    content: post.content
+                                                }
+                                            });
+                                            setEditingBlogs({
+                                                ...Object.keys(editingBlogs).reduce((acc, key) => ({
+                                                    ...acc,
+                                                    [key]: false
+                                                }), {}),
+                                                [post._id]: true
+                                            });
+                                        }}
+                                    >
+                                        ✎
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

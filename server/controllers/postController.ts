@@ -44,3 +44,49 @@ export const getPosts = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+export const updatePost = async (req: Request, res: Response) => {
+    try {
+        const { postId } = req.params;
+        const { title, summary, content } = req.body;
+        const userId = (req as any).user._id;
+
+        // Find and update the post
+        const updatedPost = await PostModel.findOneAndUpdate(
+            { _id: postId, author: userId },
+            { title, summary, content },
+            { new: true }
+        );
+
+        if (!updatedPost) {
+            return res.status(404).json({ message: 'Post not found or unauthorized' });
+        }
+
+        res.json(updatedPost);
+    } catch (error) {
+        console.error('Post update error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+export const deletePost = async (req: Request, res: Response) => {
+    try {
+        const { postId } = req.params;
+        const userId = (req as any).user._id;
+
+        // Find and delete the post
+        const deletedPost = await PostModel.findOneAndDelete({
+            _id: postId,
+            author: userId
+        });
+
+        if (!deletedPost) {
+            return res.status(404).json({ message: 'Post not found or unauthorized' });
+        }
+
+        res.json({ message: 'Post deleted successfully' });
+    } catch (error) {
+        console.error('Post delete error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
