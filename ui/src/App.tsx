@@ -8,6 +8,7 @@ import Layout from './Components/Layout';
 import {AuthProvider} from './Context/AuthContext';
 import CreatePost from "./Components/CreatePost";
 import MyProfile from "./Components/MyProfile";
+import Blogpost from "./Pages/Blogpost";
 
 const App = () => {
     return (
@@ -20,6 +21,7 @@ const App = () => {
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/createpost" element={<CreatePost/>}/>
                         <Route path="/myprofile" element={<MyProfile />} />
+                        <Route path="/post/:id" element={<Blogpost />} />
                     </Route>
                 </Routes>
             </Router>

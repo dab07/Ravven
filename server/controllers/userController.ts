@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from '../models/User';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import PostModel from "../models/Post";
 
 const SALT_ROUNDS : number = 10;
 const JWT_SECRET : string = 'かいずこ鬼俺わなる'
@@ -94,6 +95,7 @@ const profile = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error fetching profile' });
     }
 };
+
 const authenticateToken = (req: Request, res: Response, next: Function) => {
     const token = req.cookies.token || (req.headers.authorization?.split(' ')[1]);
 
@@ -119,56 +121,88 @@ const verifyToken = async (req: Request, res: Response) => {
         res.status(401).json({ error: "Invalid token" });
     }
 };
-/* *
-• authenticateToken vs. checkAuth
 
-authenticateToken: This is a middleware function designed to protect routes. It verifies a token exists and is valid,
-    then attaches user info to the request object before calling next() to proceed to the protected route handler.
-checkAuth: This is an endpoint handler specifically for checking authentication status and returning that information to the client.
-    It doesn't just verify the token - it returns a response about authentication status and user data.
-
-Why you need checkAuth
-    The key difference is in how they're used:
-        Different use cases:
-            authenticateToken is used to protect API routes (like /profile)
-            checkAuth is used as an API endpoint itself that the frontend can call to determine auth status
-
-        Different responses:
-            authenticateToken doesn't return a response by itself - it either lets the request continue or returns an error
-            checkAuth always returns a response with information about authentication status
-
-        Frontend initialization:
-            When your React app first loads, it needs to know if the user is already authenticated
-            The app can't just try to access a protected route - it needs a dedicated endpoint that specifically answers "is the user logged in?"
-/
- */
-const checkAuth = async (req: Request, res: Response) => {
+const updateProfile = async (req : Request, res : Response) => {
     try {
-        const token = req.cookies.token || (req.headers.authorization?.split(' ')[1]);
+        const { username, password } = req.body;
 
-        if (!token) {
-            return res.status(401).json({ authenticated: false });
+        // Type assertion for user ID from authenticated request
+        const userId = (req as any).userId;
+
+        // Find the user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        try {
-            const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, username: string };
-            const user = await User.findById(decoded.userId).select('-password');
+        // Update username if provided
+        // if (username) {
+        //     // Check if username is already taken
+        //     const existingUser = await User.findOne({ username });
+        //
+        //     // Add type-safe ID comparison
+        //     if (existingUser && existingUser._id.toString() !== userId) {
+        //         return res.status(400).json({ message: 'Username already exists' });
+        //     }
+        //     user.username = username;
+        // }
 
-            if (!user) {
-                return res.status(404).json({ authenticated: false });
+        // Update password if provided
+        if (password) {
+            // Validate password strength (optional but recommended)
+            if (password.length < 6) {
+                return res.status(400).json({ message: 'Password must be at least 6 characters long' });
             }
 
-            return res.status(200).json({
-                authenticated: true,
-                user: { username: user.username, _id: user._id }
-            });
-        } catch (err) {
-            return res.status(403).json({ authenticated: false });
+            // Hash the new password
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
         }
+
+        // Save the updated user
+        await user.save();
+
+        // Return user without password
+        const userResponse = {
+            _id: user._id,
+            username: user.username
+        };
+
+        res.json(userResponse);
     } catch (error) {
-        console.error("Error in checkAuth controller:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error('Profile update error:', error);
+        res.status(500).json({
+            message: 'Server error',
+        });
     }
 };
 
-module.exports = {login, signup, logout, profile, authenticateToken, verifyToken, checkAuth}
+const deleteProfile = async (req: Request, res: Response) => {
+    try {
+        const postId = req.params.id;
+        const {username} = req.body;
+
+        // Find the post
+        const post = await PostModel.findById(postId);
+
+        // Check if post exists
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Check if the user is the author of the post
+        if (post.author.toString() !== username) {
+            return res.status(403).json({ message: 'Not authorized to delete this post' });
+        }
+
+        // Delete the post
+        await PostModel.findByIdAndDelete(postId);
+
+        res.json({ message: 'Post deleted successfully' });
+    } catch (error) {
+        console.error('Post deletion error:', error);
+        res.status(500).json({ error: 'Server error'});
+    }
+}
+
+module.exports = {login, signup, logout, profile, authenticateToken, verifyToken, updateProfile, deleteProfile}
