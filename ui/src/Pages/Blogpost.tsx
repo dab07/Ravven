@@ -3,11 +3,12 @@ import { useLocation, useParams } from "react-router-dom";
 import { formatISO9075 } from "date-fns";
 import { Post } from "../type/Post";
 import '../css/Blogpost.css'
+import {useNavigate} from "react-router-dom";
 
 export const Blogpost = () => {
     const location = useLocation();
     const { id } = useParams();
-
+    const navigate = useNavigate();
     // Try to get post from location state first
     const post: Post | undefined = location.state?.post;
 
@@ -18,6 +19,9 @@ export const Blogpost = () => {
 
     return (
         <div className="blog-post-container">
+            <button onClick={() => navigate(-1)} className="back-button">
+                ← Back
+            </button>
             <div className="blog-post-grid">
                 <div className="blog-post-image">
                     {post.image && (

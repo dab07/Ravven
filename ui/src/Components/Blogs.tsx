@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { formatISO9075 } from 'date-fns';
 import { Post } from '../type/Post';
 import '../css/Blogs.css';
+import Comments from "./Comments";
+import Like from "./Like";
 
 type BlogProps = {
     post: Post;
@@ -31,6 +33,17 @@ const Blogs = ({ post }: BlogProps) => {
             <div className="blog-info">
                 <h2 className="title">{post.title || 'Untitled'}</h2>
                 <p className="blog-summary">{post.summary || post.content || 'No content'}</p>
+            </div>
+
+            <div className="blog-interactions">
+                <Like
+                    postId={post._id}
+                    initialLikes={post.likes}
+                />
+                <Comments
+                    postId={post._id}
+                    initialComments={post.comments}
+                />
             </div>
         </div>
     );

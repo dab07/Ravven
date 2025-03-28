@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import PostModel from '../models/Post';
 
-export const createPost = async (req: Request, res: Response) => {
+const createPost = async (req: Request, res: Response) => {
     try {
         const { title, summary, content } = req.body;
         const file = req.file;
@@ -30,7 +30,7 @@ export const createPost = async (req: Request, res: Response) => {
     }
 };
 
-export const getPosts = async (req: Request, res: Response) => {
+const getPosts = async (req: Request, res: Response) => {
     try {
         const posts = await PostModel.find()
             .populate('author', ['username']) // Make sure this is working
@@ -45,48 +45,71 @@ export const getPosts = async (req: Request, res: Response) => {
     }
 };
 
-export const updatePost = async (req: Request, res: Response) => {
+const likePost = async (req: Request, res: Response) => {
     try {
-        const { postId } = req.params;
-        const { title, summary, content } = req.body;
-        const userId = (req as any).user._id;
+        const postId = req.params.id;
 
-        // Find and update the post
-        const updatedPost = await PostModel.findOneAndUpdate(
-            { _id: postId, author: userId },
-            { title, summary, content },
+        // Find the post and increment likes
+        const post = await PostModel.findByIdAndUpdate(
+            postId,
+            { $inc: { likes: 1 } },
             { new: true }
         );
 
-        if (!updatedPost) {
-            return res.status(404).json({ message: 'Post not found or unauthorized' });
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
         }
 
-        res.json(updatedPost);
+        res.json({ likes: post.likes });
     } catch (error) {
-        console.error('Post update error:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error liking post:', error);
+        res.status(500).json({ message: 'Server error', error });
     }
 }
 
-export const deletePost = async (req: Request, res: Response) => {
+const commentPost = async (req: Request, res: Response) => {
     try {
-        const { postId } = req.params;
-        const userId = (req as any).user._id;
+        const postId = req.params.id;
+        const { content, username = 'Anonymous' } = req.body;
 
-        // Find and delete the post
-        const deletedPost = await PostModel.findOneAndDelete({
-            _id: postId,
-            author: userId
-        });
+        // Find the post and add comment
+        const post = await PostModel.findByIdAndUpdate(
+            postId,
+            {
+                $push: {
+                    comments: {
+                        content,
+                        author: null,
+                        createdAt: new Date()
+                    }
+                }
+            },
+            { new: true }
+        );
 
-        if (!deletedPost) {
-            return res.status(404).json({ message: 'Post not found or unauthorized' });
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
         }
 
-        res.json({ message: 'Post deleted successfully' });
+        // Type assertion to ensure comments exist
+        const newComment = (post.comments as NonNullable<typeof post.comments>)[
+        (post.comments as NonNullable<typeof post.comments>).length - 1
+            ];
+
+        res.status(201).json({
+            _id: newComment._id,
+            content: newComment.content,
+            author: { username },
+            createdAt: newComment.createdAt
+        });
     } catch (error) {
-        console.error('Post delete error:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error adding comment:', error);
+        res.status(500).json({
+            message: 'Server error',
+            error: error instanceof Error ? error.message : error
+        });
     }
 }
+
+
+module.exports = {createPost, getPosts, likePost, commentPost}

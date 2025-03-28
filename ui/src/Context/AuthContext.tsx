@@ -10,6 +10,7 @@ type UserProfile = {
 type AuthContextType = {
     isAuthenticated: boolean;
     user: UserProfile | null;
+    setUser: React.Dispatch<React.SetStateAction<UserProfile | null>>;
     login: (token: string, userData: any) => void;
     logout: () => void;
     fetchProfile: () => Promise<void>;
@@ -100,8 +101,8 @@ export const AuthProvider = ({children} : {children : React.ReactNode}) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, fetchProfile }}>
-            {children}
+        <AuthContext.Provider value={{ isAuthenticated, user, setUser, login, logout, fetchProfile }}>
+        {children}
         </AuthContext.Provider>
     );
 };

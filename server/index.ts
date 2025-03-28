@@ -1,6 +1,7 @@
 import express, {Request, Response} from "express";
 import mongoose = require('mongoose');
-import router from './router/userRoutes'
+import userRoutes from './router/userRoutes';
+import postRoutes from './router/postRoutes';
 import path from "path";
 
 const cookieParser = require('cookie-parser')
@@ -12,7 +13,8 @@ const PORT : number = 3000
 app.use(cookieParser())
 app.use(cors({credentials : true, origin:'http://localhost:8081'}))
 app.use(express.json())
-app.use('/', router)
+app.use('/', userRoutes)
+app.use('/posts', postRoutes)
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

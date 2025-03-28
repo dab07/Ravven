@@ -1,196 +1,105 @@
 .profile {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-areas:
-        "main-profile"
-        "profile-edit"
-        "user-post-counts"
-        "edit-button"
-        "main-post"
-        "user-posts";
-    gap: 15px;
-    background: linear-gradient(#111111, #333333, #111111);
-    color: white;
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.main-profile {
-    grid-area: main-profile;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.profile-edit {
-    grid-area: profile-edit;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile-edit.editing form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    max-width: 400px;
-}
-
-.profile-edit.editing input {
-    background: #444;
-    color: white;
-    border: 1px solid #555;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background 0.3s ease;
-}
-
-.user-post-counts {
-    grid-area: user-post-counts;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: #aaa;
-}
-
-.profile-edit:last-of-type {
-    grid-area: edit-button;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.main-post {
-    grid-area: main-post;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.user-posts {
-    grid-area: user-posts;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    overflow-y: auto;
-    max-height: 600px;
-    padding: 10px;
-}
-
-/* Rest of the previous CSS remains the same */
-
-.blog-wrapper {
-    position: relative;
-    background: #222;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-}
-
-.blog-wrapper:hover {
-    transform: scale(1.02);
-}
-
-.blog-display {
-    position: relative;
-}
-
-.edit-blog-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(255,255,255,0.2);
-    border: none;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.3s ease, background 0.3s ease;
-}
-
-.blog-display:hover .edit-blog-btn {
-    opacity: 1;
-}
-
-.edit-blog-btn:hover {
-    background: rgba(255,255,255,0.4);
-}
-
-.blog-edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    background: #222;
+    width: 80%;
+    margin: 20px auto;
+    background: #ddd;
     padding: 20px;
     border-radius: 10px;
 }
 
-.blog-edit-form input,
-.blog-edit-form textarea {
-    background: #333;
-    color: white;
-    border: 1px solid #444;
-    padding: 12px;
-    border-radius: 5px;
-    transition: background 0.3s ease;
+.main-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
 }
 
-.blog-edit-form input:focus,
-.blog-edit-form textarea:focus {
-    outline: none;
+.profile-edit {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.profile-edit button {
     background: #444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.profile-edit button:hover {
+    background: #666;
+}
+
+.profile-edit input {
+    width: 100%;
+    padding: 5px;
+    margin: 5px 0;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+
+.user-posts {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+}
+
+.blog-wrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.delete-post-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+}
+
+.editing .delete-post-btn {
+    display: block; /* Show when edit mode is enabled */
+}
+
+.password-fields {
+    display: none;
+}
+
+.editing .password-fields {
+    display: block;
 }
 
 .blog-edit-actions {
     display: flex;
     gap: 10px;
-    justify-content: space-between;
+    margin-top: 10px;
 }
 
 .blog-edit-actions button {
-    padding: 10px 15px;
+    background: #444;
+    color: white;
     border: none;
+    padding: 5px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background 0.3s ease;
 }
 
-.blog-edit-actions button:first-child {
-    background: #4CAF50;
-    color: white;
-}
-
-.blog-edit-actions button:nth-child(2) {
-    background: #FF9800;
-    color: white;
-}
-
-.blog-edit-actions button:last-child {
-    background: #F44336;
-    color: white;
-}
-
-@media (max-width: 768px) {
-    .profile {
-        width: 95%;
-        padding: 20px;
-    }
-
-    .user-posts {
-        grid-template-columns: 1fr;
-    }
+.blog-edit-actions button:hover {
+    background: #666;
 }

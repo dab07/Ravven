@@ -1,16 +1,43 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-type PostDocument = {
+// Define a separate type for comments
+type CommentDocument = {
+    _id?: string;
+    content: string;
+    author: mongoose.Types.ObjectId | null;
+    createdAt: Date;
+}
+
+// Updated PostDocument type
+type PostDocument = Document & {
     title: string;
     summary: string;
     content: string;
     image?: string;
     author: mongoose.Types.ObjectId;
+    likes?: number;
+    comments?: CommentDocument[];
     createdAt: Date;
     updatedAt: Date;
-} & Document
+}
 
-const PostSchema = new Schema({
+const CommentSchema = new Schema<CommentDocument>({
+    content: {
+        type: String,
+        required: true
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+const PostSchema = new Schema<PostDocument>({
     title: {
         type: String,
         required: true
@@ -26,15 +53,20 @@ const PostSchema = new Schema({
     image: {
         type: String,
     },
-    author : {
-        type : Schema.Types.ObjectId,
-        ref : 'User',
-        required : true
-    }
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    likes: {
+        type: Number,
+        default: 0
+    },
+    comments: [CommentSchema]
 }, {
     timestamps: true
 });
 
-const PostModel = mongoose.model('Post', PostSchema);
+const PostModel = mongoose.model<PostDocument>('Post', PostSchema);
 
 export default PostModel;

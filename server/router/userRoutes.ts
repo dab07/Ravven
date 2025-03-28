@@ -16,7 +16,5 @@ router.get('/profile', usercontrollers.authenticateToken, usercontrollers.profil
 router.get('/verifyToken', usercontrollers.authenticateToken, usercontrollers.verifyToken);
 
 router.put('/updateprofile', usercontrollers.authenticateToken, usercontrollers.updateProfile);
-router.put('/updatePost/:postId', usercontrollers.authenticateToken, postcontrollers.updatePost);
-router.delete('/deletepost/:postId', usercontrollers.authenticateToken, postcontrollers.deletePost);
 
 export default router;

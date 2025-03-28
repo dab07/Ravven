@@ -6,6 +6,19 @@ import PostModel from "../models/Post";
 
 const SALT_ROUNDS : number = 10;
 const JWT_SECRET : string = 'かいずこ鬼俺わなる'
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: {
+                userId: string;
+                username: string;
+            };
+            userId?: string;
+        }
+    }
+}
+
 const login = async (req : Request, res : Response) => {
     try {
         const { username, password } = req.body;
@@ -96,7 +109,7 @@ const profile = async (req: Request, res: Response) => {
     }
 };
 
-const authenticateToken = (req: Request, res: Response, next: Function) => {
+export const authenticateToken = (req: Request, res: Response, next: Function) => {
     const token = req.cookies.token || (req.headers.authorization?.split(' ')[1]);
 
     if (!token) {
@@ -105,8 +118,11 @@ const authenticateToken = (req: Request, res: Response, next: Function) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, username: string };
-        (req as any).userId = decoded.userId; // Attach userId to request
-        (req as any).user = decoded;
+        req.userId = decoded.userId;
+        req.user = {
+            userId: decoded.userId,
+            username: decoded.username
+        };
         next();
     } catch (err) {
         return res.status(403).json({ error: "Invalid or expired token" });
@@ -123,69 +139,25 @@ const verifyToken = async (req: Request, res: Response) => {
 };
 
 const updateProfile = async (req : Request, res : Response) => {
+    const { username, password } = req.body;
+    const userId = (req as any).userId; // Assuming session middleware is used
+
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
     try {
-        const { username, password } = req.body;
-        const userId = (req as any).user._id; // From auth middleware
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
 
-        // Prepare update object
-        const updateData: any = { username };
+        if (username) user.username = username;
+        if (password) user.password = await bcrypt.hash(password, 10); // Secure password update
 
-        // If password is provided, hash it
-        if (password) {
-            const salt = await bcrypt.genSalt(10);
-            updateData.password = await bcrypt.hash(password, salt);
-        }
-
-        // Update user
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            updateData,
-            { new: true }
-        );
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Remove password from response
-        const userResponse = {
-            _id: updatedUser._id,
-            username: updatedUser.username
-        };
-
-        res.json(userResponse);
+        await user.save();
+        res.json({ message: "Profile updated successfully" });
     } catch (error) {
-        console.error('Profile update error:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error("Error updating profile:", error);
+        res.status(500).json({ message: "Server error" });
     }
-};
 
-// const deleteProfile = async (req: Request, res: Response) => {
-//     try {
-//         const postId = req.params.id;
-//         const {username} = req.body;
-//
-//         // Find the post
-//         const post = await PostModel.findById(postId);
-//
-//         // Check if post exists
-//         if (!post) {
-//             return res.status(404).json({ message: 'Post not found' });
-//         }
-//
-//         // Check if the user is the author of the post
-//         if (post.author.toString() !== username) {
-//             return res.status(403).json({ message: 'Not authorized to delete this post' });
-//         }
-//
-//         // Delete the post
-//         await PostModel.findByIdAndDelete(postId);
-//
-//         res.json({ message: 'Post deleted successfully' });
-//     } catch (error) {
-//         console.error('Post deletion error:', error);
-//         res.status(500).json({ error: 'Server error'});
-//     }
-// }
+};
 
 module.exports = {login, signup, logout, profile, authenticateToken, verifyToken, updateProfile}
