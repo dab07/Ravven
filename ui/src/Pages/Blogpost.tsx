@@ -7,11 +7,10 @@ import {useNavigate} from "react-router-dom";
 
 export const Blogpost = () => {
     const location = useLocation();
-    const { id } = useParams();
     const navigate = useNavigate();
     // Try to get post from location state first
     const post: Post | undefined = location.state?.post;
-
+    const allComments = post?.comments ?? [];
     if (!post) {
         // Fallback if no post in state (e.g., direct navigation)
         return <div>Post not found</div>;
@@ -28,7 +27,9 @@ export const Blogpost = () => {
                         <img src={`http://localhost:3000/uploads/${post.image}`} alt={post.title} />
                     )}
                 </div>
-
+                <div className="like-count">
+                    {post.likes}
+                </div>
                 <div className="blog-post-title">
                     <h2 className="title">{post.title || 'Untitled'}</h2>
                 </div>
@@ -45,6 +46,20 @@ export const Blogpost = () => {
 
                 <div className="blog-post-content">
                     <p>{post.content}</p>
+                </div>
+                <div className="blog-post-comments">
+                    <div className="comments-list">
+                        {allComments.map((comment) => (
+                            <div key={comment._id} className="comment">
+                                <p>{comment.content}</p>
+                                <small>
+                                    {comment.author?.username || 'Anonymous'}
+                                    {' - '}
+                                    {formatISO9075(new Date(comment.createdAt))}
+                                </small>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

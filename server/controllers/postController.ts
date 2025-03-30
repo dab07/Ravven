@@ -66,6 +66,27 @@ const likePost = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Server error', error });
     }
 }
+const unLikePost = async (req: Request, res: Response) => {
+    try {
+        const postId = req.params.id;
+
+        // Find the post and increment likes
+        const post = await PostModel.findByIdAndUpdate(
+            postId,
+            { $inc: { likes: -1 } },
+            { new: true }
+        );
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        res.json({ likes: post.likes });
+    } catch (error) {
+        console.error('Error unliking post:', error);
+        res.status(500).json({ message: 'Server error', error });
+    }
+}
 
 const commentPost = async (req: Request, res: Response) => {
     try {
@@ -112,4 +133,4 @@ const commentPost = async (req: Request, res: Response) => {
 }
 
 
-module.exports = {createPost, getPosts, likePost, commentPost}
+module.exports = {createPost, getPosts, likePost, unLikePost,commentPost}

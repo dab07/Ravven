@@ -1,0 +1,104 @@
+/* From Uiverse.io by vinodjangid07 */
+.bookmarkBtn {
+    width: 100px;
+    height: 30px;
+    border-radius: 40px;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition-duration: .3s;
+    overflow: hidden;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.062);
+}
+
+.IconContainer {
+    width: 30px;
+    height: 30px;
+    background-color: rgb(103, 74, 228);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 2;
+    transition-duration: .3s;
+}
+
+.icon {
+    border-radius: 1px;
+}
+
+.text {
+    height: 100%;
+    width: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(26, 26, 26);
+    z-index: 1;
+    transition-duration: .3s;
+    font-size: 1.04em;
+    font-weight: 600;
+}
+
+.bookmarkBtn:hover .IconContainer {
+    width: 120px;
+    border-radius: 40px;
+    transition-duration: .3s;
+}
+
+.bookmarkBtn:hover .text {
+    transform: translate(10px);
+    width: 0;
+    font-size: 0;
+    transition-duration: .3s;
+}
+
+.bookmarkBtn:active {
+    transform: scale(0.95);
+    transition-duration: .3s;
+}
+
+.comments-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    margin-top: 8px;
+    z-index: 10;
+}
+
+/* Comment form */
+.comments-container form {
+    display: flex;
+    gap: 8px;
+}
+
+.comments-container input {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.comments-container button {
+    background-color: #5c59cf;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.comments-container button:hover {
+    background-color: #4a48a2;
+}

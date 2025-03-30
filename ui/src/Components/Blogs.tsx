@@ -18,34 +18,36 @@ const Blogs = ({ post }: BlogProps) => {
     };
 
     return (
-        <div className="blog-card" onClick={handlePostClick}>
-            <div className="blog-image">
-                {post.image && (
-                    <img src={`http://localhost:3000/uploads/${post.image}`} alt={post.title} />
-                )}
+            <div className="blog-card" >
+                <div onClick={handlePostClick}>
+                    <div className="blog-image">
+                        {post.image && (
+                            <img src={`http://localhost:3000/uploads/${post.image}`} alt={post.title} />
+                        )}
+                    </div>
+
+                    <div className="blog-meta">
+                        <span className="author">{post.author?.username || 'Anonymous'}</span>
+                        <time className="date">{post.createdAt ? formatISO9075(new Date(post.createdAt)) : 'No date'}</time>
+                    </div>
+
+                    <div className="blog-info">
+                        <h2 className="title">{post.title || 'Untitled'}</h2>
+                        <p className="blog-summary">{post.summary || post.content || 'No content'}</p>
+                    </div>
+                </div>
+                <div className="blog-interactions">
+                    <Like
+                        postId={post._id}
+                        initialLikes={post.likes}
+                    />
+                        <Comments
+                            postId={post._id}
+                            initialComments={post.comments}
+                        />
+                </div>
             </div>
 
-            <div className="blog-meta">
-                <span className="author">{post.author?.username || 'Anonymous'}</span>
-                <time className="date">{post.createdAt ? formatISO9075(new Date(post.createdAt)) : 'No date'}</time>
-            </div>
-
-            <div className="blog-info">
-                <h2 className="title">{post.title || 'Untitled'}</h2>
-                <p className="blog-summary">{post.summary || post.content || 'No content'}</p>
-            </div>
-
-            <div className="blog-interactions">
-                <Like
-                    postId={post._id}
-                    initialLikes={post.likes}
-                />
-                <Comments
-                    postId={post._id}
-                    initialComments={post.comments}
-                />
-            </div>
-        </div>
     );
 };
 
