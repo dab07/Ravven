@@ -63,42 +63,54 @@
 }
 
 .comments-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 300px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    padding: 15px;
-    margin-top: 8px;
-    z-index: 10;
+    padding-top: 10px;
+    max-width: 100%;
 }
 
-/* Comment form */
-.comments-container form {
+.comments-container .form {
     display: flex;
-    gap: 8px;
+    flex-direction: row;
 }
 
 .comments-container input {
     flex-grow: 1;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
+    background: linear-gradient(#111111, #333333, #111111);
+    border: 1px solid rgba(154, 56, 56, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+    color: #fff;
     font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
 }
 
+.comments-container input::placeholder {
+    color: #F97794;
+}
+
+/* Input field focus effect */
+.comments-container input:focus {
+    border: 1px solid #d4b4f0; /* Light purple accent */
+    box-shadow: #FFB6C1 0 0 10px -5px;
+}
+
+/* Style for the submit button */
 .comments-container button {
-    background-color: #5c59cf;
+    background: linear-gradient(135deg, #623aa2, #4E2A85, #7D5BA6);
     color: white;
     border: none;
-    border-radius: 20px;
-    padding: 8px 15px;
+    padding: 10px 15px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
 }
 
 .comments-container button:hover {
-    background-color: #4a48a2;
+    background: linear-gradient(135deg, #F97794, #D43F6A,#FFB6C1);
+    box-shadow: 0px 0px 10px #FFB6C1;
+}
+
+.comments-container button:active {
+    transform: scale(0.95);
 }

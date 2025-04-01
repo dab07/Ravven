@@ -3,6 +3,7 @@
     width: 80px;
     height: 50px;
     position: relative;
+    align-self: center;
 }
 
 .loader-text {
